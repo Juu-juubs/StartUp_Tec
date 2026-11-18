@@ -154,3 +154,69 @@ btnCadastrar.addEventListener("click", function () {
 });
 
 btnCancelar.addEventListener("click", () => limparFormulario());
+
+const resultado = document.getElementById("resultado");
+
+const exibirResultado = (titulo, linhas) => {
+  resultado.innerHTML = "";
+
+  const tituloEl = document.createElement("strong");
+  tituloEl.textContent = titulo;
+  resultado.appendChild(tituloEl);
+
+  const lista = document.createElement("ul");
+  lista.className = "mb-0 mt-2";
+  linhas.forEach((linha) => {
+    const item = document.createElement("li");
+    item.textContent = linha;
+    lista.appendChild(item);
+  });
+  resultado.appendChild(lista);
+};
+
+const semFuncionarios = () => {
+  if (funcionarios.length === 0) {
+    exibirResultado("Aviso", ["Não há funcionários cadastrados."]);
+    return true;
+  }
+  return false;
+};
+
+document.getElementById("btn-salario-alto").addEventListener("click", () => {
+  if (semFuncionarios()) return;
+
+  const linhas = funcionarios
+    .filter((f) => f.salario > 5000)
+    .map((f) => `${f.nome} - ${f.cargo} - ${formatarMoeda(f.salario)}`);
+
+  exibirResultado(
+    "Funcionários com salário maior que R$ 5.000,00:",
+    linhas.length > 0 ? linhas : ["Nenhum funcionário nessa faixa."]
+  );
+});
+
+document.getElementById("btn-media-salarial").addEventListener("click", () => {
+  if (semFuncionarios()) return;
+
+  const soma = funcionarios.reduce((acc, f) => acc + f.salario, 0);
+  const media = soma / funcionarios.length;
+
+  exibirResultado("Média salarial:", [formatarMoeda(media)]);
+});
+
+document.getElementById("btn-cargos-unicos").addEventListener("click", () => {
+  if (semFuncionarios()) return;
+
+  const cargos = funcionarios.map((f) => f.cargo);
+  const cargosUnicos = [...new Set(cargos)];
+
+  exibirResultado("Cargos únicos:", cargosUnicos);
+});
+
+document.getElementById("btn-nomes-maiusculo").addEventListener("click", () => {
+  if (semFuncionarios()) return;
+
+  const nomesMaiusculos = funcionarios.map((f) => f.nome.toUpperCase());
+
+  exibirResultado("Nomes em maiúsculo:", nomesMaiusculos);
+});
